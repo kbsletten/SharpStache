@@ -16,16 +16,20 @@ namespace SharpStache
     {
         internal class LiteralTemplate : ITemplate
         {
-            internal readonly string Text;
+            internal readonly string Template;
+            internal readonly int Offset;
+            internal readonly int Length;
 
-            internal LiteralTemplate(string text)
+            internal LiteralTemplate(string template, int offset, int length)
             {
-                Text = text;
+                Template = template;
+                Offset = offset;
+                Length = length;
             }
 
             void ITemplate.Render(StringBuilder builder, object value)
             {
-                builder.Append(Text);
+                builder.Append(Template, Offset, Length);
             }
         }
 
@@ -186,13 +190,16 @@ namespace SharpStache
             {
                 var token = tokens.Current;
 
+                if (token.Type == TagType.Text)
+                {
+                    yield return new LiteralTemplate(template, token.Offset, token.Length);
+                    continue;
+                }
+
                 var text = template.Substring(token.Offset, token.Length);
 
                 switch (token.Type)
                 {
-                    case TagType.Text:
-                        yield return new LiteralTemplate(text);
-                        break;
                     case TagType.Escaped:
                         yield return new EscapeTemplate(text);
                         break;
