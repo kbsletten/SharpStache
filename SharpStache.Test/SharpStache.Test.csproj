@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="SharpStacheTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SpecTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SharpStache\SharpStache.csproj">
