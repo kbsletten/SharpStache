@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpStache", "SharpStache\SharpStache.csproj", "{9DC81015-776E-4E01-AD44-2BD7171039E0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpStache.Test", "SharpStache.Test\SharpStache.Test.csproj", "{110EA015-3DF7-43B0-BD95-05872263F9DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpStache.Perf", "SharpStache.Perf\SharpStache.Perf.csproj", "{388AB74C-0BB1-48C6-ACD7-E64BD918A94F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,6 +23,10 @@ Global
 		{110EA015-3DF7-43B0-BD95-05872263F9DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{110EA015-3DF7-43B0-BD95-05872263F9DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{110EA015-3DF7-43B0-BD95-05872263F9DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{388AB74C-0BB1-48C6-ACD7-E64BD918A94F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{388AB74C-0BB1-48C6-ACD7-E64BD918A94F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{388AB74C-0BB1-48C6-ACD7-E64BD918A94F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{388AB74C-0BB1-48C6-ACD7-E64BD918A94F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

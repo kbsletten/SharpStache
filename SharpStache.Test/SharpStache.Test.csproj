@@ -52,13 +52,15 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SpecTest.cs" />
-    <Compile Include="PerfTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SharpStache\SharpStache.csproj">
       <Project>{9dc81015-776e-4e01-ad44-2bd7171039e0}</Project>
       <Name>SharpStache</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
