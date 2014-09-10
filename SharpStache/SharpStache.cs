@@ -13,6 +13,13 @@ namespace SharpStache
     /// </summary>
     public static class SharpStache
     {
+        private static readonly IDictionary<string, string> Empty = new Dictionary<string, string>();
+
+        public static string Render(string template, object value)
+        {
+            return Render(template, Empty, value);
+        }
+
         public static string Render(string template, IDictionary<string, string> partials, object value)
         {
             var templates = Parser.GetTemplates(template);
