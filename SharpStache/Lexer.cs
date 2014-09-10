@@ -119,7 +119,9 @@ namespace SharpStache
                             index = SkipWhitespace(template, index + 1);
                             break;
                         case '>':
-                            throw new NotImplementedException("Partials not implemented");
+                            token.Type = TagType.Partial;
+                            index = SkipWhitespace(template, index + 1);
+                            break;
                         default:
                             token.Type = TagType.Attribute;
                             break;
@@ -133,26 +135,11 @@ namespace SharpStache
 
                     ScanBrace(template, close, ref index);
 
-                    var shouldignore =
-                        token.Type == TagType.Loop ||
-                        token.Type == TagType.Not ||
-                        token.Type == TagType.End;
-
-                    if (shouldignore && index < template.Length && template[index] == '\r')
-                        index++;
-                    if (shouldignore && index < template.Length && template[index] == '\n')
-                        index++;
-
                     yield return token;
                 }
                 else
                 {
                     ScanBrace(template, close, ref index);
-
-                    if (index < template.Length && template[index] == '\r')
-                        index++;
-                    if (index < template.Length && template[index] == '\n')
-                        index++;
                 }
             }
         }

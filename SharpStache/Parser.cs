@@ -9,7 +9,7 @@ namespace SharpStache
 {
     internal interface ITemplate
     {
-        void Render(StringBuilder builder, object value);
+        void Render(StringBuilder builder, IDictionary<string, string> partials, object value);
     }
 
     internal static class Parser
@@ -27,7 +27,7 @@ namespace SharpStache
                 Length = length;
             }
 
-            void ITemplate.Render(StringBuilder builder, object value)
+            void ITemplate.Render(StringBuilder builder, IDictionary<string, string> partials, object value)
             {
                 builder.Append(Template, Offset, Length);
             }
@@ -43,7 +43,7 @@ namespace SharpStache
                 Inner = inner;
             }
 
-            internal override void Render(StringBuilder builder, object value)
+            internal override void Render(StringBuilder builder, IDictionary<string, string> partials, object value)
             {
                 var val = Get(value);
 
@@ -59,7 +59,7 @@ namespace SharpStache
                     {
                         foreach (var template in Inner)
                         {
-                            template.Render(builder, v);
+                            template.Render(builder, partials, v);
 
                         }
                     }
@@ -68,7 +68,7 @@ namespace SharpStache
                 {
                     foreach (var template in Inner)
                     {
-                        template.Render(builder, value);
+                        template.Render(builder, partials, val);
                     }
                 }
             }
@@ -84,7 +84,7 @@ namespace SharpStache
                 Inner = inner;
             }
 
-            internal override void Render(StringBuilder builder, object value)
+            internal override void Render(StringBuilder builder, IDictionary<string, string> partials, object value)
             {
                 var val = Get(value);
 
@@ -95,7 +95,31 @@ namespace SharpStache
 
                 foreach (var template in Inner)
                 {
-                    template.Render(builder, value);
+                    template.Render(builder, partials, value);
+                }
+            }
+        }
+
+        internal class PartialTemplate : ITemplate
+        {
+            internal readonly string Name;
+
+            internal PartialTemplate(string name)
+            {
+                Name = name;
+            }
+
+            void ITemplate.Render(StringBuilder builder, IDictionary<string, string> partials, object value)
+            {
+                string partial;
+
+                if (partials.TryGetValue(Name, out partial))
+                {
+                    var templates = GetTemplates(partial);
+                    foreach (var template in templates)
+                    {
+                        template.Render(builder, partials, value);
+                    }
                 }
             }
         }
@@ -108,7 +132,7 @@ namespace SharpStache
 
             }
 
-            internal override void Render(StringBuilder buidler, object value)
+            internal override void Render(StringBuilder buidler, IDictionary<string, string> partials, object value)
             {
                 buidler.Append(Get(value));
             }
@@ -158,12 +182,12 @@ namespace SharpStache
                 return null;
             }
 
-            void ITemplate.Render(StringBuilder builder, object value)
+            void ITemplate.Render(StringBuilder builder, IDictionary<string, string> partials, object value)
             {
-                Render(builder, value);
+                Render(builder, partials, value);
             }
 
-            internal abstract void Render(StringBuilder builder, object value);
+            internal abstract void Render(StringBuilder builder, IDictionary<string, string> partials, object value);
         }
 
         internal class AttrTemplate : MemberTemplate
@@ -173,7 +197,7 @@ namespace SharpStache
             {
             }
 
-            internal override void Render(StringBuilder buidler, object value)
+            internal override void Render(StringBuilder buidler, IDictionary<string, string> partials, object value)
             {
                 buidler.Append(WebUtility.HtmlEncode((Get(value) ?? "").ToString()));
             }
@@ -206,14 +230,15 @@ namespace SharpStache
                     case TagType.Attribute:
                         yield return new AttrTemplate(text);
                         break;
+                    case TagType.Partial:
+                        yield return new PartialTemplate(text);
+                        break;
                     case TagType.Loop:
                         yield return new LoopTemplate(text, GetTemplates(template, tokens, text).ToArray());
                         break;
                     case TagType.Not:
                         yield return new NotTemplate(text, GetTemplates(template, tokens, text).ToArray());
                         break;
-                    case TagType.Partial:
-                        throw new NotImplementedException("Partials not implemented");
                     case TagType.End:
                         if (context != text)
                             throw new Exception("Unmatched end tag. Got " + text + " expecting " + (context ?? "nothing"));

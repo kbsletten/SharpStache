@@ -13,13 +13,13 @@ namespace SharpStache
     /// </summary>
     public static class SharpStache
     {
-        public static string Render(string template, object value)
+        public static string Render(string template, IDictionary<string, string> partials, object value)
         {
             var templates = Parser.GetTemplates(template);
             var builder = new StringBuilder();
             foreach (var temp in templates)
             {
-                temp.Render(builder, value);
+                temp.Render(builder, partials, value);
             }
             return builder.ToString();
         }
