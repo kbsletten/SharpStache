@@ -338,7 +338,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             string template = "These characters should be HTML escaped: {{forbidden}}\n";
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             object data = new { forbidden = "& \" < >" };
-            string expected = "These characters should be HTML escaped: & \" < >\n";
+            string expected = "These characters should be HTML escaped: &amp; &quot; &lt; &gt;\n";
             Assert.AreEqual(expected, SharpStache.Render(template, partials, data));
         }
         /* Triple mustaches should interpolate without HTML escaping. */

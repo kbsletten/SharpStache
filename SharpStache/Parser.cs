@@ -140,46 +140,61 @@ namespace SharpStache
 
         internal abstract class MemberTemplate : ITemplate
         {
-            internal readonly string Name;
+            internal readonly string[] Name;
 
             internal MemberTemplate(string name)
             {
-                Name = name;
+                if (name == ".")
+                {
+                    Name = new[] { name };
+                }
+                else
+                {
+                    Name = name.Split('.');
+                }
             }
 
             internal object Get(object value)
             {
-                if (Name == ".")
-                    return value;
+                foreach (var name in Name)
+                {
+                    if (name == ".")
+                        return value;
 
-                if (value == null)
+                    if (value == null)
+                        return null;
+
+                    var dict = value as IDictionary;
+                    if (dict != null)
+                    {
+                        value = dict[Name];
+                        continue;
+                    }
+
+                    var field = value.GetType().GetField(name);
+                    if (field != null)
+                    {
+                        value = field.GetValue(value);
+                        continue;
+                    }
+
+                    var prop = value.GetType().GetProperty(name);
+                    if (prop != null)
+                    {
+                        value = prop.GetValue(value, null);
+                        continue;
+                    }
+
+                    var meth = value.GetType().GetMethod(name);
+                    if (meth != null)
+                    {
+                        value = meth.Invoke(value, null);
+                        continue;
+                    }
+
                     return null;
-
-                var dict = value as IDictionary;
-                if (dict != null)
-                {
-                    return dict[Name];
                 }
-
-                var field = value.GetType().GetField(Name);
-                if (field != null)
-                {
-                    return field.GetValue(value);
-                }
-
-                var prop = value.GetType().GetProperty(Name);
-                if (prop != null)
-                {
-                    return prop.GetValue(value, null);
-                }
-
-                var meth = value.GetType().GetMethod(Name);
-                if (meth != null)
-                {
-                    return meth.Invoke(value, null);
-                }
-
-                return null;
+                return value;
             }
 
             void ITemplate.Render(StringBuilder builder, IDictionary<string, string> partials, object value)
