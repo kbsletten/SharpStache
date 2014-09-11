@@ -28,6 +28,24 @@ namespace SharpStache.Perf
             return stopwatch.ElapsedMilliseconds / (double)ALargeNumber;
         }
 
+        public static double TestEmpty(Func<string, object, string> render)
+        {
+            var template = "";
+            object data = null;
+            var expected = "";
+
+            return Sweat(render, expected, template, data);
+        }
+
+        public static double TestText(Func<string, object, string> render)
+        {
+            var template = "Hello, world";
+            object data = null;
+            var expected = "Hello, world";
+
+            return Sweat(render, expected, template, data);
+        }
+
         public static double TestSimple(Func<string, object, string> render)
         {
             var template = "Hello, {{name}}";
@@ -50,17 +68,24 @@ namespace SharpStache.Perf
         {
             for (var i = 0; i < 10; i++)
             {
-                TestSimple(SharpStache.Render);
-                TestLoop(SharpStache.Render);
-                TestSimple((t, d) => Render.StringToString(t, d));
-                TestLoop((t, d) => Render.StringToString(t, d));
-            }
-            
-            Console.WriteLine("SharpStache Simple {0}ms", TestSimple(SharpStache.Render));
-            Console.WriteLine("SharpStache Loop {0}ms", TestLoop(SharpStache.Render));
+                Console.WriteLine("=== Trial {0} ===", i);
+                
+                Console.WriteLine("--- SharpStache ---");
+                Console.WriteLine("[{0}ms] Empty", TestEmpty(SharpStache.Render));
+                Console.WriteLine("[{0}ms] Text", TestText(SharpStache.Render));
+                Console.WriteLine("[{0}ms] Simple", TestSimple(SharpStache.Render));
+                Console.WriteLine("[{0}ms] Loop", TestLoop(SharpStache.Render));
+                Console.WriteLine();
+                GC.Collect();
 
-            Console.WriteLine("Nustache Simple {0}ms", TestSimple((t, d) => Render.StringToString(t, d)));
-            Console.WriteLine("Nustache Loop {0}ms", TestLoop((t, d) => Render.StringToString(t, d)));
+                Console.WriteLine("--- Nustache ---");
+                Console.WriteLine("[{0}ms] Empty", TestEmpty((t, d) => Render.StringToString(t, d)));
+                Console.WriteLine("[{0}ms] Text", TestText((t, d) => Render.StringToString(t, d)));
+                Console.WriteLine("[{0}ms] Simple", TestSimple((t, d) => Render.StringToString(t, d)));
+                Console.WriteLine("[{0}ms] Loop", TestLoop((t, d) => Render.StringToString(t, d)));
+                Console.WriteLine();
+                GC.Collect();
+            }
         }
     }
 }
