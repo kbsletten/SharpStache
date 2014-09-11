@@ -81,9 +81,11 @@ namespace SharpStache
                 var offset = index;
                 var brace = ScanBrace(template, open, ref index);
 
+                Token? text = null;
+
                 if (offset != brace)
                 {
-                    yield return new Token
+                    text = new Token
                     {
                         Offset = offset,
                         Length = brace - offset,
@@ -96,7 +98,11 @@ namespace SharpStache
                 index = SkipWhitespace(template, index);
 
                 if (index == template.Length)
+                {
+                    if (text != null)
+                        yield return (Token)text;
                     yield break;
+                }
 
                 if (template[index] != '!')
                 {
@@ -135,13 +141,59 @@ namespace SharpStache
 
                     ScanBrace(template, close, ref index);
 
+                    if (text != null)
+                        yield return (Token)text;
                     yield return token;
                 }
                 else
                 {
                     ScanBrace(template, close, ref index);
+                    Standalone(template, ref text, ref index);
+
+                    if (text != null)
+                        yield return (Token)text;
                 }
             }
+        }
+
+        private static void Standalone(string template, ref Token? text, ref int index)
+        {
+            if (text == null) return;
+            var tok = (Token)text;
+
+            int start = tok.Offset + tok.Length - 1;
+            int end = index;
+
+            while (start >= tok.Offset)
+            {
+                if (template[start] == '\r' || template[start] == '\n')
+                    break;
+                if (!char.IsWhiteSpace(template[start]))
+                    return;
+                start--;
+            }
+
+            while (end < template.Length)
+            {
+                if (template[end] != '\r' || template[end] != '\n')
+                {
+                    end++;
+                    if (end < template.Length && template[end] == '\n')
+                    {
+                        end++;
+                    }
+                    break;
+                }
+                if (!char.IsWhiteSpace(template[end]))
+                {
+                    return;
+                }
+                end++;
+            }
+            
+            tok.Length = start - tok.Offset + 1;
+            text = tok.Length > 0 ? (Token?)tok : null;
+            index = end;
         }
     }
 }

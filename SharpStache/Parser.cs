@@ -156,45 +156,40 @@ namespace SharpStache
 
             internal object Get(object value)
             {
-                foreach (var name in Name)
+                return Name.Aggregate(value, (val, name) =>
                 {
                     if (name == ".")
-                        return value;
+                        return val;
 
-                    if (value == null)
+                    if (val == null)
                         return null;
 
-                    var dict = value as IDictionary;
+                    var dict = val as IDictionary;
                     if (dict != null)
                     {
-                        value = dict[Name];
-                        continue;
+                        return dict[Name];
                     }
 
-                    var field = value.GetType().GetField(name);
+                    var field = val.GetType().GetField(name);
                     if (field != null)
                     {
-                        value = field.GetValue(value);
-                        continue;
+                        return field.GetValue(val);
                     }
 
-                    var prop = value.GetType().GetProperty(name);
+                    var prop = val.GetType().GetProperty(name);
                     if (prop != null)
                     {
-                        value = prop.GetValue(value, null);
-                        continue;
+                        return prop.GetValue(val, null);
                     }
 
-                    var meth = value.GetType().GetMethod(name);
+                    var meth = val.GetType().GetMethod(name);
                     if (meth != null)
                     {
-                        value = meth.Invoke(value, null);
-                        continue;
+                        return meth.Invoke(val, null);
                     }
 
                     return null;
-                }
-                return value;
+                });
             }
 
             void ITemplate.Render(StringBuilder builder, IDictionary<string, string> partials, object value)

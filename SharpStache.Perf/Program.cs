@@ -12,7 +12,7 @@ namespace SharpStache.Perf
     {
         public const int ALargeNumber = 10000;
 
-        public static long Sweat(Func<string, object, string> render, string expected, string template, object data)
+        public static double Sweat(Func<string, object, string> render, string expected, string template, object data)
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -25,10 +25,10 @@ namespace SharpStache.Perf
                 }
             }
             stopwatch.Stop();
-            return stopwatch.ElapsedMilliseconds;
+            return stopwatch.ElapsedMilliseconds / (double)ALargeNumber;
         }
 
-        public static long TestSimple(Func<string, object, string> render)
+        public static double TestSimple(Func<string, object, string> render)
         {
             var template = "Hello, {{name}}";
             var data = new { name = "world" };
@@ -37,7 +37,7 @@ namespace SharpStache.Perf
             return Sweat(render, expected, template, data);
         }
 
-        public static long TestLoop(Func<string, object, string> render)
+        public static double TestLoop(Func<string, object, string> render)
         {
             var template = "Hello{{#people}}, {{name}}{{/people}}";
             var data = new { people = new[] { new { name = "Joe" }, new { name = "Jill" }, new { name = "Jack" }, new { name = "Janet" } } };
