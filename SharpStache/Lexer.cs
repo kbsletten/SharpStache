@@ -141,6 +141,11 @@ namespace SharpStache
 
                     ScanBrace(template, close, ref index);
 
+                    if (token.Type == TagType.Loop || token.Type == TagType.Not || token.Type == TagType.End)
+                    {
+                        Standalone(template, ref text, ref index);
+                    }
+
                     if (text != null)
                         yield return (Token)text;
                     yield return token;
@@ -175,7 +180,7 @@ namespace SharpStache
 
             while (end < template.Length)
             {
-                if (template[end] != '\r' || template[end] != '\n')
+                if (template[end] == '\r')
                 {
                     end++;
                     if (end < template.Length && template[end] == '\n')
@@ -184,10 +189,13 @@ namespace SharpStache
                     }
                     break;
                 }
-                if (!char.IsWhiteSpace(template[end]))
+                if (template[end] == '\n')
                 {
-                    return;
+                    end++;
+                    break;
                 }
+                if (!char.IsWhiteSpace(template[end]))
+                    return;
                 end++;
             }
             
