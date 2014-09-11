@@ -64,6 +64,16 @@ namespace SharpStache.Perf
             return Sweat(render, expected, template, data);
         }
 
+        public static string SharpStacheRender(string template, object data)
+        {
+            return SharpStache.Render(template, data);
+        }
+
+        public static string NustacheRender(string template, object data)
+        {
+            return Render.StringToString(template, data);
+        }
+
         static void Main(string[] args)
         {
             for (var i = 0; i < 10; i++)
@@ -71,18 +81,18 @@ namespace SharpStache.Perf
                 Console.WriteLine("=== Trial {0} ===", i);
                 
                 Console.WriteLine("--- SharpStache ---");
-                Console.WriteLine("[{0}ms] Empty", TestEmpty(SharpStache.Render));
-                Console.WriteLine("[{0}ms] Text", TestText(SharpStache.Render));
-                Console.WriteLine("[{0}ms] Simple", TestSimple(SharpStache.Render));
-                Console.WriteLine("[{0}ms] Loop", TestLoop(SharpStache.Render));
+                Console.WriteLine("[{0}ms] Empty", TestEmpty(SharpStacheRender));
+                Console.WriteLine("[{0}ms] Text", TestText(SharpStacheRender));
+                Console.WriteLine("[{0}ms] Simple", TestSimple(SharpStacheRender));
+                Console.WriteLine("[{0}ms] Loop", TestLoop(SharpStacheRender));
                 Console.WriteLine();
                 GC.Collect();
 
                 Console.WriteLine("--- Nustache ---");
-                Console.WriteLine("[{0}ms] Empty", TestEmpty((t, d) => Render.StringToString(t, d)));
-                Console.WriteLine("[{0}ms] Text", TestText((t, d) => Render.StringToString(t, d)));
-                Console.WriteLine("[{0}ms] Simple", TestSimple((t, d) => Render.StringToString(t, d)));
-                Console.WriteLine("[{0}ms] Loop", TestLoop((t, d) => Render.StringToString(t, d)));
+                Console.WriteLine("[{0}ms] Empty", TestEmpty(NustacheRender));
+                Console.WriteLine("[{0}ms] Text", TestText(NustacheRender));
+                Console.WriteLine("[{0}ms] Simple", TestSimple(NustacheRender));
+                Console.WriteLine("[{0}ms] Loop", TestLoop(NustacheRender));
                 Console.WriteLine();
                 GC.Collect();
             }
