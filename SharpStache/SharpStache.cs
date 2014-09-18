@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -24,9 +25,11 @@ namespace SharpStache
         {
             var templates = Parser.GetTemplates(template);
             var builder = new StringBuilder();
+            var values = new Stack();
+            values.Push(value);
             foreach (var temp in templates)
             {
-                temp.Render(builder, partials, value);
+                temp.Render(builder, partials, values);
             }
             return builder.ToString();
         }
