@@ -1,18 +1,16 @@
 ﻿using System.Threading;
 using Nustache.Core;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SharpStache.Perf
 {
-    class Program
+    public class Program
     {
         public const long IterationCount = 100000;
-        public const int ThreadCount = 10;
+        public const int ThreadCount = 16;
 
         public static double Sweat(Func<string, object, string> render, string expected, string template, object data)
         {
@@ -42,8 +40,7 @@ namespace SharpStache.Perf
             }
 
             Task.WaitAll(threads);
-
-            return 1000 * time / (double)IterationCount;
+            return time / (double)IterationCount;
         }
 
         public static double TestEmpty(Func<string, object, string> render)
@@ -80,6 +77,17 @@ namespace SharpStache.Perf
             return Sweat(render, expected, template, data);
         }
 
+        private static string StringReplaceRender(string template, object data)
+        {
+            if (data == null)
+            {
+                return template;
+            }
+            return data.GetType()
+                .GetProperties()
+                .Aggregate(template, (s, p) => s.Replace("{{" + p.Name + "}}", p.GetValue(data).ToString()));
+        }
+
         public static string SharpStacheRender(string template, object data)
         {
             return SharpStache.Render(template, data);
@@ -90,25 +98,31 @@ namespace SharpStache.Perf
             return Render.StringToString(template, data);
         }
 
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             for (var i = 0; i < 10; i++)
             {
-                Console.WriteLine("=== Trial {0} ===", i);
-                
+                Console.WriteLine("=== Trial {0} ===", i + 1);
+
+                Console.WriteLine("--- StringReplace ---");
+                Console.WriteLine("[{0:N6} ms] Empty", TestEmpty(StringReplaceRender));
+                Console.WriteLine("[{0:N6} ms] Text", TestText(StringReplaceRender));
+                Console.WriteLine("[{0:N6} ms] Simple", TestSimple(StringReplaceRender));
+                Console.WriteLine();
+
                 Console.WriteLine("--- SharpStache ---");
-                Console.WriteLine("[{0}µs] Empty", TestEmpty(SharpStacheRender));
-                Console.WriteLine("[{0}µs] Text", TestText(SharpStacheRender));
-                Console.WriteLine("[{0}µs] Simple", TestSimple(SharpStacheRender));
-                Console.WriteLine("[{0}µs] Loop", TestLoop(SharpStacheRender));
+                Console.WriteLine("[{0:N6} ms] Empty", TestEmpty(SharpStacheRender));
+                Console.WriteLine("[{0:N6} ms] Text", TestText(SharpStacheRender));
+                Console.WriteLine("[{0:N6} ms] Simple", TestSimple(SharpStacheRender));
+                Console.WriteLine("[{0:N6} ms] Loop", TestLoop(SharpStacheRender));
                 Console.WriteLine();
                 GC.Collect();
 
                 Console.WriteLine("--- Nustache ---");
-                Console.WriteLine("[{0}µs] Empty", TestEmpty(NustacheRender));
-                Console.WriteLine("[{0}µs] Text", TestText(NustacheRender));
-                Console.WriteLine("[{0}µs] Simple", TestSimple(NustacheRender));
-                Console.WriteLine("[{0}µs] Loop", TestLoop(NustacheRender));
+                Console.WriteLine("[{0:N6} ms] Empty", TestEmpty(NustacheRender));
+                Console.WriteLine("[{0:N6} ms] Text", TestText(NustacheRender));
+                Console.WriteLine("[{0:N6} ms] Simple", TestSimple(NustacheRender));
+                Console.WriteLine("[{0:N6} ms] Loop", TestLoop(NustacheRender));
                 Console.WriteLine();
                 GC.Collect();
             }
