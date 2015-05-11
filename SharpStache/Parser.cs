@@ -191,7 +191,7 @@ namespace SharpStache
             var dict = val as IDictionary;
             if (dict != null)
             {
-                return dict[Name];
+                return dict[name];
             }
 
             var field = val.GetType().GetField(name);
