@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{110EA015-3DF7-43B0-BD95-05872263F9DE}</ProjectGuid>
+    <ProjectGuid>{67560F9C-832E-4836-B425-9C77D823FD78}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SharpStache.Test</RootNamespace>

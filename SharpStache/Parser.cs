@@ -274,7 +274,7 @@ namespace SharpStache
                     case TagType.Loop:
                         yield return new SectionTemplate(text, GetTemplates(template, tokens, text).ToArray());
                         break;
-                    case TagType.Not:
+                    case TagType.Inverted:
                         yield return new InvertedTemplate(text, GetTemplates(template, tokens, text).ToArray());
                         break;
                     case TagType.End:

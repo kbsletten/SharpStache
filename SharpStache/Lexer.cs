@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace SharpStache
@@ -13,7 +12,7 @@ namespace SharpStache
         Attribute,
         Escaped,
         Loop,
-        Not,
+        Inverted,
         Partial,
         End
     }
@@ -73,7 +72,7 @@ namespace SharpStache
             return braceOffset;
         }
 
-        internal static IEnumerable<Token> GetTokens(string template)
+        internal static IEnumerable<Token> GetTokens(string template, string open = "{{", string close = "}}")
         {
             var index = 0;
 
@@ -133,7 +132,7 @@ namespace SharpStache
                                 index = SkipWhitespace(template, index + 1);
                                 break;
                             case '^':
-                                token.Type = TagType.Not;
+                                token.Type = TagType.Inverted;
                                 index = SkipWhitespace(template, index + 1);
                                 break;
                             case '>':
@@ -154,7 +153,7 @@ namespace SharpStache
 
                     ScanBrace(template, triple ? "}}}" : "}}", ref index);
 
-                    if (token.Type == TagType.Loop || token.Type == TagType.Not || token.Type == TagType.End)
+                    if (token.Type == TagType.Loop || token.Type == TagType.Inverted || token.Type == TagType.End || token.Type == TagType.Partial)
                     {
                         Standalone(template, ref text, ref index);
                     }
@@ -176,20 +175,7 @@ namespace SharpStache
 
         private static void Standalone(string template, ref Token? text, ref int index)
         {
-            if (text == null) return;
-            var tok = (Token)text;
-
-            int start = tok.Offset + tok.Length - 1;
             int end = index;
-
-            while (start >= tok.Offset)
-            {
-                if (template[start] == '\r' || template[start] == '\n')
-                    break;
-                if (!char.IsWhiteSpace(template[start]))
-                    return;
-                start--;
-            }
 
             while (end < template.Length)
             {
@@ -211,9 +197,26 @@ namespace SharpStache
                     return;
                 end++;
             }
-            
-            tok.Length = start - tok.Offset + 1;
-            text = tok.Length > 0 ? (Token?)tok : null;
+
+            if (text != null)
+            {
+                var tok = (Token)text;
+
+                int start = tok.Offset + tok.Length - 1;
+
+                while (start >= 0)
+                {
+                    if (template[start] == '\r' || template[start] == '\n')
+                        break;
+                    if (!char.IsWhiteSpace(template[start]))
+                        return;
+                    start--;
+                }
+
+                tok.Length = start < tok.Offset ? 0 : start - tok.Offset + 1;
+                text = tok.Length > 0 ? (Token?)tok : null;
+            }
+
             index = end;
         }
     }
