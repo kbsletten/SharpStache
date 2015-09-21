@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Web;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace SharpStache.Test
@@ -42,6 +43,12 @@ namespace SharpStache.Test
         public void TestMethod()
         {
             Assert.AreEqual("123", SharpStache.Render("{{Test}}", new TestClass()));
+        }
+
+        [TestMethod]
+        public void TestHtmlString()
+        {
+            Assert.AreEqual("<", SharpStache.Render("{{.}}", new HtmlString("<")));
         }
     }
 }

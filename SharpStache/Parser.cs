@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Linq;
+using System.Web;
 
 namespace SharpStache
 {
@@ -232,7 +233,9 @@ namespace SharpStache
 
         internal override void Render(StringBuilder buidler, IDictionary<string, string> partials, Stack values)
         {
-            buidler.Append(WebUtility.HtmlEncode((Get(values) ?? "").ToString()));
+            var value = Get(values) ?? "";
+            var html = value as IHtmlString;
+            buidler.Append(html != null ? html.ToHtmlString() : WebUtility.HtmlEncode(value.ToString()));
         }
     }
 

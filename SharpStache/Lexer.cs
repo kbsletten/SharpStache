@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SharpStache
@@ -72,14 +73,19 @@ namespace SharpStache
             return braceOffset;
         }
 
-        internal static IEnumerable<Token> GetTokens(string template, string open = "{{", string close = "}}")
+        internal static IEnumerable<Token> GetTokens(string template)
         {
             var index = 0;
 
             while (index < template.Length)
             {
                 var offset = index;
-                var brace = ScanBrace(template, open, ref index);
+                var brace = ScanBrace(template, "{{", ref index);
+                var triple = template.Length > index && template[index] == '{';
+                if (triple)
+                {
+                    index++;
+                }
 
                 Token? text = null;
 
@@ -104,33 +110,40 @@ namespace SharpStache
                     yield break;
                 }
 
-                if (template[index] != '!')
+                if (triple || template[index] != '!')
                 {
-                    switch (template[index])
+                    if (triple)
                     {
-                        case '&':
-                            token.Type = TagType.Escaped;
-                            index = SkipWhitespace(template, index + 1);
-                            break;
-                        case '#':
-                            token.Type = TagType.Loop;
-                            index = SkipWhitespace(template, index + 1);
-                            break;
-                        case '/':
-                            token.Type = TagType.End;
-                            index = SkipWhitespace(template, index + 1);
-                            break;
-                        case '^':
-                            token.Type = TagType.Not;
-                            index = SkipWhitespace(template, index + 1);
-                            break;
-                        case '>':
-                            token.Type = TagType.Partial;
-                            index = SkipWhitespace(template, index + 1);
-                            break;
-                        default:
-                            token.Type = TagType.Attribute;
-                            break;
+                        token.Type = TagType.Escaped;
+                    }
+                    else
+                    {
+                        switch (template[index])
+                        {
+                            case '&':
+                                token.Type = TagType.Escaped;
+                                index = SkipWhitespace(template, index + 1);
+                                break;
+                            case '#':
+                                token.Type = TagType.Loop;
+                                index = SkipWhitespace(template, index + 1);
+                                break;
+                            case '/':
+                                token.Type = TagType.End;
+                                index = SkipWhitespace(template, index + 1);
+                                break;
+                            case '^':
+                                token.Type = TagType.Not;
+                                index = SkipWhitespace(template, index + 1);
+                                break;
+                            case '>':
+                                token.Type = TagType.Partial;
+                                index = SkipWhitespace(template, index + 1);
+                                break;
+                            default:
+                                token.Type = TagType.Attribute;
+                                break;
+                        }
                     }
 
                     var start = index;
@@ -139,7 +152,7 @@ namespace SharpStache
                     token.Offset = start;
                     token.Length = end - start;
 
-                    ScanBrace(template, close, ref index);
+                    ScanBrace(template, triple ? "}}}" : "}}", ref index);
 
                     if (token.Type == TagType.Loop || token.Type == TagType.Not || token.Type == TagType.End)
                     {
@@ -152,7 +165,7 @@ namespace SharpStache
                 }
                 else
                 {
-                    ScanBrace(template, close, ref index);
+                    ScanBrace(template, "}}", ref index);
                     Standalone(template, ref text, ref index);
 
                     if (text != null)
