@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.IO;
 
 namespace SharpStache
 {
@@ -23,15 +17,7 @@ namespace SharpStache
 
         public static string Render(string template, IDictionary<string, string> partials, object value)
         {
-            var templates = Parser.GetTemplates(template);
-            var builder = new StringBuilder();
-            var values = new Stack();
-            values.Push(value);
-            foreach (var temp in templates)
-            {
-                temp.Render(builder, partials, values);
-            }
-            return builder.ToString();
+            return Mustache.RenderValue(template, partials, new LegacyValue(value));
         }
     }
 }

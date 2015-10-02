@@ -20,6 +20,7 @@ namespace SharpStache.Perf
     {
         StringReplace,
         SharpStache,
+        Mustache,
         Nustache
     }
 
@@ -29,7 +30,24 @@ namespace SharpStache.Perf
         public const int ThreadCount = 16;
         public const int Trials = 10;
 
-        public static double Sweat(Func<string, object, string> render, string expected, string template, object data)
+        public struct TestCase<T>
+        {
+            public string Template;
+            public string Expected;
+            public T Data;
+        }
+
+        public static TestCase<T> Case<T>(string template, string expected, T data)
+        {
+            return new TestCase<T>
+            {
+                Template = template,
+                Expected = expected,
+                Data = data
+            };
+        }
+
+        public static double Sweat<T>(Func<string, T, string> render, TestCase<T> testCase)
         {
             var threads = new Task[ThreadCount];
             var index = 0;
@@ -44,10 +62,10 @@ namespace SharpStache.Perf
                     var j = Interlocked.Increment(ref index);
                     while (j < IterationCount)
                     {
-                        var actual = render(template, data);
-                        if (expected != actual)
+                        var actual = render(testCase.Template, testCase.Data);
+                        if (testCase.Expected != actual)
                         {
-                            throw new Exception("Expected: <" + expected + "> Actual <" + actual + ">");
+                            throw new Exception("Expected: <" + testCase.Expected + "> Actual <" + actual + ">");
                         }
                         j = Interlocked.Increment(ref index);
                     }
@@ -60,41 +78,7 @@ namespace SharpStache.Perf
             return time / (double)IterationCount;
         }
 
-        public static double TestEmpty(Func<string, object, string> render)
-        {
-            var template = "";
-            var expected = "";
-
-            return Sweat(render, expected, template, null);
-        }
-
-        public static double TestText(Func<string, object, string> render)
-        {
-            var template = "Hello, world";
-            var expected = "Hello, world";
-
-            return Sweat(render, expected, template, null);
-        }
-
-        public static double TestSimple(Func<string, object, string> render)
-        {
-            var template = "Hello, {{name}}";
-            var data = new { name = "world" };
-            var expected = "Hello, world";
-
-            return Sweat(render, expected, template, data);
-        }
-
-        public static double TestLoop(Func<string, object, string> render)
-        {
-            var template = "Hello{{#people}}, {{name}}{{/people}}";
-            var data = new { people = new[] { new { name = "Joe" }, new { name = "Jill" }, new { name = "Jack" }, new { name = "Janet" } } };
-            var expected = "Hello, Joe, Jill, Jack, Janet";
-
-            return Sweat(render, expected, template, data);
-        }
-
-        private static string StringReplaceRender(string template, object data)
+        private static string StringReplaceRender<T>(string template, T data)
         {
             if (data == null)
             {
@@ -105,34 +89,66 @@ namespace SharpStache.Perf
                 .Aggregate(template, (s, p) => s.Replace("{{" + p.Name + "}}", p.GetValue(data).ToString()));
         }
 
-        public static string SharpStacheRender(string template, object data)
+        public static string SharpStacheRender<T>(string template, T data)
         {
             return SharpStache.Render(template, data);
         }
 
-        public static string NustacheRender(string template, object data)
+        public static string MustacheRender<T>(string template, T data)
+        {
+            return Mustache.Render(template, data);
+        }
+
+        public static string NustacheRender<T>(string template, T data)
         {
             return Render.StringToString(template, data);
         }
 
         public static void Main(string[] args)
         {
+            var empty = Case("", "", default(object));
+            var text = Case("Hello, world", "Hello, world", default(object));
+            var simple = Case("Hello, {{name}}", "Hello, world", new {name = "world"});
+            var loop = Case("Hello{{#people}}, {{name}}{{/people}}", "Hello, Joe, Jill, Jack, Janet",
+                new
+                {
+                    people = new[] {new {name = "Joe"}, new {name = "Jill"}, new {name = "Jack"}, new {name = "Janet"}}
+                });
+
             var trials = new double[Enum.GetValues(typeof (Alternative)).Length, Enum.GetValues(typeof (Test)).Length, Trials];
             for (var i = 0; i < Trials; i++)
             {
-                trials[(int) Alternative.StringReplace, (int) Test.Empty, i] = TestEmpty(StringReplaceRender); GC.Collect();
-                trials[(int) Alternative.StringReplace, (int) Test.Text, i] = TestText(StringReplaceRender); GC.Collect();
-                trials[(int) Alternative.StringReplace, (int) Test.Simple, i] = TestSimple(StringReplaceRender); GC.Collect();
-
-                trials[(int) Alternative.SharpStache, (int) Test.Empty, i] = TestEmpty(SharpStacheRender); GC.Collect();
-                trials[(int) Alternative.SharpStache, (int) Test.Text, i] = TestText(SharpStacheRender); GC.Collect();
-                trials[(int) Alternative.SharpStache, (int) Test.Simple, i] = TestSimple(SharpStacheRender); GC.Collect();
-                trials[(int) Alternative.SharpStache, (int) Test.Loop, i] = TestLoop(SharpStacheRender); GC.Collect();
-
-                trials[(int) Alternative.Nustache, (int) Test.Empty, i] = TestEmpty(NustacheRender); GC.Collect();
-                trials[(int) Alternative.Nustache, (int) Test.Text, i] = TestText(NustacheRender); GC.Collect();
-                trials[(int) Alternative.Nustache, (int) Test.Simple, i] = TestSimple(NustacheRender); GC.Collect();
-                trials[(int) Alternative.Nustache, (int) Test.Loop, i] = TestLoop(NustacheRender); GC.Collect();
+                if (true)
+                {
+                    trials[(int) Alternative.StringReplace, (int) Test.Empty, i] = Sweat(StringReplaceRender, empty); GC.Collect();
+                    trials[(int) Alternative.StringReplace, (int) Test.Text, i] = Sweat(StringReplaceRender, text); GC.Collect();
+                    trials[(int) Alternative.StringReplace, (int) Test.Simple, i] = Sweat(StringReplaceRender, simple); GC.Collect();
+                    
+                }
+                if (true)
+                {
+                    trials[(int) Alternative.SharpStache, (int) Test.Empty, i] = Sweat(SharpStacheRender, empty); GC.Collect();
+                    trials[(int) Alternative.SharpStache, (int) Test.Text, i] = Sweat(SharpStacheRender, text); GC.Collect();
+                    trials[(int) Alternative.SharpStache, (int) Test.Simple, i] = Sweat(SharpStacheRender, simple); GC.Collect();
+                    trials[(int) Alternative.SharpStache, (int) Test.Loop, i] = Sweat(SharpStacheRender, loop); GC.Collect();
+                    
+                }
+                if (true)
+                {
+                    trials[(int) Alternative.Mustache, (int) Test.Empty, i] = Sweat(MustacheRender, empty); GC.Collect();
+                    trials[(int) Alternative.Mustache, (int) Test.Text, i] = Sweat(MustacheRender, text); GC.Collect();
+                    trials[(int) Alternative.Mustache, (int) Test.Simple, i] = Sweat(MustacheRender, simple); GC.Collect();
+                    trials[(int) Alternative.Mustache, (int) Test.Loop, i] = Sweat(MustacheRender, loop); GC.Collect();
+                    
+                }
+                if (true)
+                {
+                    trials[(int) Alternative.Nustache, (int) Test.Empty, i] = Sweat(NustacheRender, empty); GC.Collect();
+                    trials[(int) Alternative.Nustache, (int) Test.Text, i] = Sweat(NustacheRender, text); GC.Collect();
+                    trials[(int) Alternative.Nustache, (int) Test.Simple, i] = Sweat(NustacheRender, simple); GC.Collect();
+                    trials[(int) Alternative.Nustache, (int) Test.Loop, i] = Sweat(NustacheRender, loop); GC.Collect();
+                    
+                }
             }
             using (var file = new FileStream("performance.csv", FileMode.Create))
             using (var writer = new StreamWriter(file))
@@ -143,7 +159,7 @@ namespace SharpStache.Perf
                     var times = Enumerable.Range(0, Trials).Select(k => trials[(int)i, (int)j, k]).ToList();
                     var avg = times.Average();
                     var dev = times.Select(t => t - avg).Select(t => t*t).Select(t => t/times.Count).Sum();
-                    writer.WriteLine("{0},{1},{2}", i, j, string.Join(", ", trials));
+                    writer.WriteLine("{0},{1},{2}", i, j, string.Join(", ", times));
                     Console.WriteLine("{0} {1}: avg={2} dev={3}", i, j, avg, dev);
                 }
             }

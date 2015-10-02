@@ -11,13 +11,13 @@ namespace SharpStache.Test
         [TestMethod]
         public void TestProperty()
         {
-            Assert.AreEqual("123", SharpStache.Render("{{Test}}", new { Test = "123" }));
+            Assert.AreEqual("123", Mustache.Render("{{Test}}", new { Test = "123" }));
         }
 
         [TestMethod]
         public void TestDictionary()
         {
-            Assert.AreEqual("123", SharpStache.Render("{{Test}}", new Dictionary<string, string> { { "Test", "123" } }));
+            Assert.AreEqual("123", Mustache.Render("{{Test}}", new Dictionary<string, string> { { "Test", "123" } }));
         }
 
         struct TestStruct
@@ -28,7 +28,7 @@ namespace SharpStache.Test
         [TestMethod]
         public void TestField()
         {
-            Assert.AreEqual("123", SharpStache.Render("{{Test}}", new TestStruct { Test = "123" }));
+            Assert.AreEqual("123", Mustache.Render("{{Test}}", new TestStruct { Test = "123" }));
         }
 
         class TestClass
@@ -42,13 +42,19 @@ namespace SharpStache.Test
         [TestMethod]
         public void TestMethod()
         {
-            Assert.AreEqual("123", SharpStache.Render("{{Test}}", new TestClass()));
+            Assert.AreEqual("123", Mustache.Render("{{Test}}", new TestClass()));
         }
 
         [TestMethod]
         public void TestHtmlString()
         {
-            Assert.AreEqual("<", SharpStache.Render("{{.}}", new HtmlString("<")));
+            Assert.AreEqual("<", Mustache.Render("{{.}}", new HtmlString("<")));
+        }
+
+        [TestMethod]
+        public void TestDownCast()
+        {
+            Assert.AreEqual("123", Mustache.Render("{{#.}}{{.}}{{/.}}", new object[] { 1, 2.0, "3" }));
         }
     }
 }

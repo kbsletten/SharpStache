@@ -1,11 +1,11 @@
-﻿using System.Text.RegularExpressions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace SharpStache.Test
 {
     [TestClass]
-    public class SpecTest
+    public class LegacySpecTest
     {
         private static readonly Regex Whitespace = new Regex(@"\s+");
         private static void AssertEqualish(string expected, string actual)
@@ -38,7 +38,7 @@ Comment tags SHOULD be treated as standalone when appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { };
             string expected = "1234567890";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
 
         /* Multiline comments should be permitted. */
@@ -49,7 +49,7 @@ Comment tags SHOULD be treated as standalone when appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { };
             string expected = "1234567890\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* All standalone comment lines should be removed. */
         [TestMethod]
@@ -59,7 +59,7 @@ Comment tags SHOULD be treated as standalone when appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { };
             string expected = "Begin.\nEnd.\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* All standalone comment lines should be removed. */
         [TestMethod]
@@ -69,7 +69,7 @@ Comment tags SHOULD be treated as standalone when appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { };
             string expected = "Begin.\nEnd.\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* "\r\n" should be considered a newline for standalone tags. */
         [TestMethod]
@@ -79,7 +79,7 @@ Comment tags SHOULD be treated as standalone when appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { };
             string expected = "|\r\n|";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Standalone tags should not require a newline to precede them. */
         [TestMethod]
@@ -89,7 +89,7 @@ Comment tags SHOULD be treated as standalone when appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { };
             string expected = "!";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Standalone tags should not require a newline to follow them. */
         [TestMethod]
@@ -99,7 +99,7 @@ Comment tags SHOULD be treated as standalone when appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { };
             string expected = "!\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* All standalone comment lines should be removed. */
         [TestMethod]
@@ -109,7 +109,7 @@ Comment tags SHOULD be treated as standalone when appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { };
             string expected = "Begin.\nEnd.\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* All standalone comment lines should be removed. */
         [TestMethod]
@@ -119,7 +119,7 @@ Comment tags SHOULD be treated as standalone when appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { };
             string expected = "Begin.\nEnd.\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Inline comments should not strip whitespace */
         [TestMethod]
@@ -129,7 +129,7 @@ Comment tags SHOULD be treated as standalone when appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { };
             string expected = "  12 \n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Comment removal should preserve surrounding whitespace. */
         [TestMethod]
@@ -139,7 +139,7 @@ Comment tags SHOULD be treated as standalone when appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { };
             string expected = "12345  67890";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         #endregion
         /*
@@ -163,7 +163,7 @@ Set Delimiter tags SHOULD be treated as standalone when appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { text = "Hey!" };
             string expected = "(Hey!)";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Characters with special meaning regexen should be valid delimiters. */
         [Ignore]
@@ -174,7 +174,7 @@ Set Delimiter tags SHOULD be treated as standalone when appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { text = "It worked!" };
             string expected = "(It worked!)";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Delimiters set outside sections should persist. */
         [Ignore]
@@ -185,7 +185,7 @@ Set Delimiter tags SHOULD be treated as standalone when appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { section = true, data = "I got interpolated." };
             string expected = "[\n  I got interpolated.\n  |data|\n\n  {{data}}\n  I got interpolated.\n]\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Delimiters set outside inverted sections should persist. */
         [Ignore]
@@ -196,7 +196,7 @@ Set Delimiter tags SHOULD be treated as standalone when appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { section = false, data = "I got interpolated." };
             string expected = "[\n  I got interpolated.\n  |data|\n\n  {{data}}\n  I got interpolated.\n]\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Delimiters set in a parent template should not affect a partial. */
         [Ignore]
@@ -207,7 +207,7 @@ Set Delimiter tags SHOULD be treated as standalone when appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { { "include", ".{{value}}." } };
             var data = new { value = "yes" };
             string expected = "[ .yes. ]\n[ .yes. ]\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Delimiters set in a partial should not affect the parent template. */
         [Ignore]
@@ -218,7 +218,7 @@ Set Delimiter tags SHOULD be treated as standalone when appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { { "include", ".{{value}}. {{= | | =}} .|value|." } };
             var data = new { value = "yes" };
             string expected = "[ .yes.  .yes. ]\n[ .yes.  .|value|. ]\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Surrounding whitespace should be left untouched. */
         [Ignore]
@@ -229,7 +229,7 @@ Set Delimiter tags SHOULD be treated as standalone when appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { };
             string expected = "|  |";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Whitespace should be left untouched. */
         [Ignore]
@@ -240,7 +240,7 @@ Set Delimiter tags SHOULD be treated as standalone when appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { };
             string expected = " | \n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Standalone lines should be removed from the template. */
         [Ignore]
@@ -251,7 +251,7 @@ Set Delimiter tags SHOULD be treated as standalone when appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { };
             string expected = "Begin.\nEnd.\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Indented standalone lines should be removed from the template. */
         [Ignore]
@@ -262,7 +262,7 @@ Set Delimiter tags SHOULD be treated as standalone when appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { };
             string expected = "Begin.\nEnd.\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* "\r\n" should be considered a newline for standalone tags. */
         [Ignore]
@@ -273,7 +273,7 @@ Set Delimiter tags SHOULD be treated as standalone when appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { };
             string expected = "|\r\n|";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Standalone tags should not require a newline to precede them. */
         [Ignore]
@@ -284,7 +284,7 @@ Set Delimiter tags SHOULD be treated as standalone when appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { };
             string expected = "=";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Standalone tags should not require a newline to follow them. */
         [Ignore]
@@ -295,7 +295,7 @@ Set Delimiter tags SHOULD be treated as standalone when appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { };
             string expected = "=\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Superfluous in-tag whitespace should be ignored. */
         [Ignore]
@@ -306,7 +306,7 @@ Set Delimiter tags SHOULD be treated as standalone when appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { };
             string expected = "||";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         #endregion
         /*
@@ -346,7 +346,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { };
             string expected = "Hello from {Mustache}!\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Unadorned tags should interpolate content into the template. */
         [TestMethod]
@@ -356,7 +356,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { subject = "world" };
             string expected = "Hello, world!\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Basic interpolation should be HTML escaped. */
         [TestMethod]
@@ -366,7 +366,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { forbidden = "& \" < >" };
             string expected = "These characters should be HTML escaped: &amp; &quot; &lt; &gt;\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Triple mustaches should interpolate without HTML escaping. */
         [TestMethod]
@@ -376,7 +376,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { forbidden = "& \" < >" };
             string expected = "These characters should not be HTML escaped: & \" < >\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Ampersand should interpolate without HTML escaping. */
         [TestMethod]
@@ -386,7 +386,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { forbidden = "& \" < >" };
             string expected = "These characters should not be HTML escaped: & \" < >\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Integers should interpolate seamlessly. */
         [TestMethod]
@@ -396,7 +396,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { mph = 85 };
             string expected = "\"85 miles an hour!\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Integers should interpolate seamlessly. */
         [TestMethod]
@@ -406,7 +406,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { mph = 85 };
             string expected = "\"85 miles an hour!\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Integers should interpolate seamlessly. */
         [TestMethod]
@@ -416,7 +416,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { mph = 85 };
             string expected = "\"85 miles an hour!\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Decimals should interpolate seamlessly with proper significance. */
         [TestMethod]
@@ -426,7 +426,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { power = 1.21 };
             string expected = "\"1.21 jiggawatts!\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Decimals should interpolate seamlessly with proper significance. */
         [TestMethod]
@@ -436,7 +436,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { power = 1.21 };
             string expected = "\"1.21 jiggawatts!\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Decimals should interpolate seamlessly with proper significance. */
         [TestMethod]
@@ -446,7 +446,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { power = 1.21 };
             string expected = "\"1.21 jiggawatts!\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Failed context lookups should default to empty strings. */
         [TestMethod]
@@ -456,7 +456,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { };
             string expected = "I () be seen!";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Failed context lookups should default to empty strings. */
         [TestMethod]
@@ -466,7 +466,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { };
             string expected = "I () be seen!";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Failed context lookups should default to empty strings. */
         [TestMethod]
@@ -476,7 +476,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { };
             string expected = "I () be seen!";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Dotted names should be considered a form of shorthand for sections. */
         [TestMethod]
@@ -486,7 +486,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { person = new { name = "Joe" } };
             string expected = "\"Joe\" == \"Joe\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Dotted names should be considered a form of shorthand for sections. */
         [TestMethod]
@@ -496,7 +496,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { person = new { name = "Joe" } };
             string expected = "\"Joe\" == \"Joe\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Dotted names should be considered a form of shorthand for sections. */
         [TestMethod]
@@ -506,7 +506,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { person = new { name = "Joe" } };
             string expected = "\"Joe\" == \"Joe\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Dotted names should be functional to any level of nesting. */
         [TestMethod]
@@ -516,7 +516,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { a = new { b = new { c = new { d = new { e = new { name = "Phil" } } } } } };
             string expected = "\"Phil\" == \"Phil\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Any falsey value prior to the last part of the name should yield ''. */
         [TestMethod]
@@ -526,7 +526,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { a = new { } };
             string expected = "\"\" == \"\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Each part of a dotted name should resolve only against its parent. */
         [TestMethod]
@@ -536,7 +536,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { a = new { b = new { } }, c = new { name = "Jim" } };
             string expected = "\"\" == \"\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* The first part of a dotted name should resolve as any other name. */
         [TestMethod]
@@ -546,7 +546,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { a = new { b = new { c = new { d = new { e = new { name = "Phil" } } } } }, b = new { c = new { d = new { e = new { name = "Wrong" } } } } };
             string expected = "\"Phil\" == \"Phil\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Interpolation should not alter surrounding whitespace. */
         [TestMethod]
@@ -556,7 +556,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { @string = "---" };
             string expected = "| --- |";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Interpolation should not alter surrounding whitespace. */
         [TestMethod]
@@ -566,7 +566,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { @string = "---" };
             string expected = "| --- |";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Interpolation should not alter surrounding whitespace. */
         [TestMethod]
@@ -576,7 +576,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { @string = "---" };
             string expected = "| --- |";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Standalone interpolation should not alter surrounding whitespace. */
         [TestMethod]
@@ -586,7 +586,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { @string = "---" };
             string expected = "  ---\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Standalone interpolation should not alter surrounding whitespace. */
         [TestMethod]
@@ -596,7 +596,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { @string = "---" };
             string expected = "  ---\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Standalone interpolation should not alter surrounding whitespace. */
         [TestMethod]
@@ -606,7 +606,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { @string = "---" };
             string expected = "  ---\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Superfluous in-tag whitespace should be ignored. */
         [TestMethod]
@@ -616,7 +616,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { @string = "---" };
             string expected = "|---|";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Superfluous in-tag whitespace should be ignored. */
         [TestMethod]
@@ -626,7 +626,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { @string = "---" };
             string expected = "|---|";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Superfluous in-tag whitespace should be ignored. */
         [TestMethod]
@@ -636,7 +636,7 @@ The Interpolation tags MUST NOT be treated as standalone.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { @string = "---" };
             string expected = "|---|";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         #endregion
         /*
@@ -685,7 +685,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { boolean = false };
             string expected = "\"This should be rendered.\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Truthy sections should have their contents omitted. */
         [TestMethod]
@@ -695,7 +695,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { boolean = true };
             string expected = "\"\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Objects and hashes should behave like truthy values. */
         [TestMethod]
@@ -705,7 +705,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { context = new { name = "Joe" } };
             string expected = "\"\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Lists should behave like truthy values. */
         [TestMethod]
@@ -713,9 +713,9 @@ appropriate.
         {
             string template = "\"{{^list}}{{n}}{{/list}}\"";
             Dictionary<string, string> partials = new Dictionary<string, string> { };
-            var data = new { list = new [] { new { n = 1 }, new { n = 2 }, new { n = 3 } } };
+            var data = new { list = new object[] { new { n = 1 }, new { n = 2 }, new { n = 3 } } };
             string expected = "\"\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Empty lists should behave like falsey values. */
         [TestMethod]
@@ -725,7 +725,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { list = new object[] { } };
             string expected = "\"Yay lists!\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Multiple inverted sections per template should be permitted. */
         [TestMethod]
@@ -735,7 +735,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { two = "second", @bool = false };
             string expected = "* first\n* second\n* third\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Nested falsey sections should have their contents rendered. */
         [TestMethod]
@@ -745,7 +745,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { @bool = false };
             string expected = "| A B C D E |";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Nested truthy sections should be omitted. */
         [TestMethod]
@@ -755,7 +755,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { @bool = true };
             string expected = "| A  E |";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Failed context lookups should be considered falsey. */
         [TestMethod]
@@ -765,7 +765,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { };
             string expected = "[Cannot find key 'missing'!]";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Dotted names should be valid for Inverted Section tags. */
         [TestMethod]
@@ -775,7 +775,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { a = new { b = new { c = true } } };
             string expected = "\"\" == \"\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Dotted names should be valid for Inverted Section tags. */
         [TestMethod]
@@ -785,7 +785,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { a = new { b = new { c = false } } };
             string expected = "\"Not Here\" == \"Not Here\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Dotted names that cannot be resolved should be considered falsey. */
         [TestMethod]
@@ -795,7 +795,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { a = new { } };
             string expected = "\"Not Here\" == \"Not Here\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Inverted sections should not alter surrounding whitespace. */
         [TestMethod]
@@ -805,7 +805,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { boolean = false };
             string expected = " | 	|	 | \n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Inverted should not alter internal whitespace. */
         [TestMethod]
@@ -815,7 +815,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { boolean = false };
             string expected = " |  \n  | \n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Single-line sections should not alter surrounding whitespace. */
         [TestMethod]
@@ -825,7 +825,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { boolean = false };
             string expected = " NO\n WAY\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Standalone lines should be removed from the template. */
         [TestMethod]
@@ -835,7 +835,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { boolean = false };
             string expected = "| This Is\n|\n| A Line\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Standalone indented lines should be removed from the template. */
         [TestMethod]
@@ -845,7 +845,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { boolean = false };
             string expected = "| This Is\n|\n| A Line\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* "\r\n" should be considered a newline for standalone tags. */
         [TestMethod]
@@ -855,7 +855,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { boolean = false };
             string expected = "|\r\n|";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Standalone tags should not require a newline to precede them. */
         [TestMethod]
@@ -865,7 +865,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { boolean = false };
             string expected = "^\n/";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Standalone tags should not require a newline to follow them. */
         [TestMethod]
@@ -875,7 +875,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { boolean = false };
             string expected = "^\n/\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Superfluous in-tag whitespace should be ignored. */
         [TestMethod]
@@ -885,7 +885,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { boolean = false };
             string expected = "|=|";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         #endregion
         /*
@@ -914,7 +914,7 @@ indentation, and prepended to each line of the partial before rendering.
             Dictionary<string, string> partials = new Dictionary<string, string> { { "text", "from partial" } };
             var data = new { };
             string expected = "\"from partial\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* The empty string should be used when the named partial is not found. */
         [TestMethod]
@@ -924,7 +924,7 @@ indentation, and prepended to each line of the partial before rendering.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { };
             string expected = "\"\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* The greater-than operator should operate within the current context. */
         [TestMethod]
@@ -934,7 +934,7 @@ indentation, and prepended to each line of the partial before rendering.
             Dictionary<string, string> partials = new Dictionary<string, string> { { "partial", "*{{text}}*" } };
             var data = new { text = "content" };
             string expected = "\"*content*\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* The greater-than operator should properly recurse. */
         [TestMethod]
@@ -942,9 +942,9 @@ indentation, and prepended to each line of the partial before rendering.
         {
             string template = "{{>node}}";
             Dictionary<string, string> partials = new Dictionary<string, string> { { "node", "{{content}}<{{#nodes}}{{>node}}{{/nodes}}>" } };
-            var data = new { content = "X", nodes = new [] { new { content = "Y", nodes = new object[] { } } } };
+            var data = new { content = "X", nodes = new object[] { new { content = "Y", nodes = new object[] { } } } };
             string expected = "X<Y<>>";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* The greater-than operator should not alter surrounding whitespace. */
         [TestMethod]
@@ -954,7 +954,7 @@ indentation, and prepended to each line of the partial before rendering.
             Dictionary<string, string> partials = new Dictionary<string, string> { { "partial", "	|	" } };
             var data = new { };
             string expected = "| 	|	 |";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Whitespace should be left untouched. */
         [TestMethod]
@@ -964,7 +964,7 @@ indentation, and prepended to each line of the partial before rendering.
             Dictionary<string, string> partials = new Dictionary<string, string> { { "partial", ">\n>" } };
             var data = new { data = "|" };
             string expected = "  |  >\n>\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* "\r\n" should be considered a newline for standalone tags. */
         [TestMethod]
@@ -974,7 +974,7 @@ indentation, and prepended to each line of the partial before rendering.
             Dictionary<string, string> partials = new Dictionary<string, string> { { "partial", ">" } };
             var data = new { };
             string expected = "|\r\n>|";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Standalone tags should not require a newline to precede them. */
         [TestMethod]
@@ -984,7 +984,7 @@ indentation, and prepended to each line of the partial before rendering.
             Dictionary<string, string> partials = new Dictionary<string, string> { { "partial", ">\n>" } };
             var data = new { };
             string expected = "  >\n  >>";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Standalone tags should not require a newline to follow them. */
         [TestMethod]
@@ -994,7 +994,7 @@ indentation, and prepended to each line of the partial before rendering.
             Dictionary<string, string> partials = new Dictionary<string, string> { { "partial", ">\n>" } };
             var data = new { };
             string expected = ">\n  >\n  >";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Each line of the partial should be indented before rendering. */
         [TestMethod]
@@ -1004,7 +1004,7 @@ indentation, and prepended to each line of the partial before rendering.
             Dictionary<string, string> partials = new Dictionary<string, string> { { "partial", "|\n{{{content}}}\n|\n" } };
             var data = new { content = "<\n->" };
             string expected = "\\n |\n <\n->\n |\n/\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Superfluous in-tag whitespace should be ignored. */
         [TestMethod]
@@ -1014,7 +1014,7 @@ indentation, and prepended to each line of the partial before rendering.
             Dictionary<string, string> partials = new Dictionary<string, string> { { "partial", "[]" } };
             var data = new { boolean = true };
             string expected = "|[]|";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         #endregion
         /*
@@ -1064,7 +1064,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { boolean = true };
             string expected = "\"This should be rendered.\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Falsey sections should have their contents omitted. */
         [TestMethod]
@@ -1074,7 +1074,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { boolean = false };
             string expected = "\"\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Objects and hashes should be pushed onto the context stack. */
         [TestMethod]
@@ -1084,7 +1084,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { context = new { name = "Joe" } };
             string expected = "\"Hi Joe.\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* All elements on the context stack should be accessible. */
         [TestMethod]
@@ -1094,7 +1094,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { a = new { one = 1 }, b = new { two = 2 }, c = new { three = 3 }, d = new { four = 4 }, e = new { five = 5 } };
             string expected = "1\n121\n12321\n1234321\n123454321\n1234321\n12321\n121\n1\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Lists should be iterated; list items should visit the context stack. */
         [TestMethod]
@@ -1102,9 +1102,9 @@ appropriate.
         {
             string template = "\"{{#list}}{{item}}{{/list}}\"";
             Dictionary<string, string> partials = new Dictionary<string, string> { };
-            var data = new { list = new [] { new { item = 1 }, new { item = 2 }, new { item = 3 } } };
+            var data = new { list = new object[] { new { item = 1 }, new { item = 2 }, new { item = 3 } } };
             string expected = "\"123\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Empty lists should behave like falsey values. */
         [TestMethod]
@@ -1114,7 +1114,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { list = new object[] { } };
             string expected = "\"\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Multiple sections per template should be permitted. */
         [TestMethod]
@@ -1124,7 +1124,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { two = "second", @bool = true };
             string expected = "* first\n* second\n* third\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Nested truthy sections should have their contents rendered. */
         [TestMethod]
@@ -1134,7 +1134,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { @bool = true };
             string expected = "| A B C D E |";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Nested falsey sections should be omitted. */
         [TestMethod]
@@ -1144,7 +1144,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { @bool = false };
             string expected = "| A  E |";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Failed context lookups should be considered falsey. */
         [TestMethod]
@@ -1154,7 +1154,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { };
             string expected = "[]";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Implicit iterators should directly interpolate strings. */
         [TestMethod]
@@ -1162,9 +1162,9 @@ appropriate.
         {
             string template = "\"{{#list}}({{.}}){{/list}}\"";
             Dictionary<string, string> partials = new Dictionary<string, string> { };
-            var data = new { list = new [] { "a", "b", "c", "d", "e" } };
+            var data = new { list = new object[] { "a", "b", "c", "d", "e" } };
             string expected = "\"(a)(b)(c)(d)(e)\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Implicit iterators should cast integers to strings and interpolate. */
         [TestMethod]
@@ -1172,9 +1172,9 @@ appropriate.
         {
             string template = "\"{{#list}}({{.}}){{/list}}\"";
             Dictionary<string, string> partials = new Dictionary<string, string> { };
-            var data = new { list = new [] { 1, 2, 3, 4, 5 } };
+            var data = new { list = new object[] { 1, 2, 3, 4, 5 } };
             string expected = "\"(1)(2)(3)(4)(5)\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Implicit iterators should cast decimals to strings and interpolate. */
         [TestMethod]
@@ -1182,9 +1182,9 @@ appropriate.
         {
             string template = "\"{{#list}}({{.}}){{/list}}\"";
             Dictionary<string, string> partials = new Dictionary<string, string> { };
-            var data = new { list = new [] { 1.1, 2.2, 3.3, 4.4, 5.5 } };
+            var data = new { list = new object[] { 1.1, 2.2, 3.3, 4.4, 5.5 } };
             string expected = "\"(1.1)(2.2)(3.3)(4.4)(5.5)\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Dotted names should be valid for Section tags. */
         [TestMethod]
@@ -1194,7 +1194,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { a = new { b = new { c = true } } };
             string expected = "\"Here\" == \"Here\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Dotted names should be valid for Section tags. */
         [TestMethod]
@@ -1204,7 +1204,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { a = new { b = new { c = false } } };
             string expected = "\"\" == \"\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Dotted names that cannot be resolved should be considered falsey. */
         [TestMethod]
@@ -1214,7 +1214,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { a = new { } };
             string expected = "\"\" == \"\"";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Sections should not alter surrounding whitespace. */
         [TestMethod]
@@ -1224,7 +1224,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { boolean = true };
             string expected = " | 	|	 | \n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Sections should not alter internal whitespace. */
         [TestMethod]
@@ -1234,7 +1234,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { boolean = true };
             string expected = " |  \n  | \n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Single-line sections should not alter surrounding whitespace. */
         [TestMethod]
@@ -1244,7 +1244,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { boolean = true };
             string expected = " YES\n GOOD\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Standalone lines should be removed from the template. */
         [TestMethod]
@@ -1254,7 +1254,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { boolean = true };
             string expected = "| This Is\n|\n| A Line\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Indented standalone lines should be removed from the template. */
         [TestMethod]
@@ -1264,7 +1264,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { boolean = true };
             string expected = "| This Is\n|\n| A Line\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* "\r\n" should be considered a newline for standalone tags. */
         [TestMethod]
@@ -1274,7 +1274,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { boolean = true };
             string expected = "|\r\n|";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Standalone tags should not require a newline to precede them. */
         [TestMethod]
@@ -1284,7 +1284,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { boolean = true };
             string expected = "#\n/";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Standalone tags should not require a newline to follow them. */
         [TestMethod]
@@ -1294,7 +1294,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { boolean = true };
             string expected = "#\n/\n";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         /* Superfluous in-tag whitespace should be ignored. */
         [TestMethod]
@@ -1304,7 +1304,7 @@ appropriate.
             Dictionary<string, string> partials = new Dictionary<string, string> { };
             var data = new { boolean = true };
             string expected = "|=|";
-            AssertEqualish(expected, Mustache.Render(template, partials, data));
+            AssertEqualish(expected, SharpStache.Render(template, partials, data));
         }
         #endregion
 
