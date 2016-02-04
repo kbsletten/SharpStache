@@ -56,5 +56,12 @@ namespace SharpStache.Test
         {
             Assert.AreEqual("123", Mustache.Render("{{#.}}{{.}}{{/.}}", new object[] { 1, 2.0, "3" }));
         }
+
+        [TestMethod]
+        public void TestUnderscore()
+        {
+            Assert.AreEqual("123", SharpStache.Render("{{_Test}}", new { _Test = 123 }));
+            Assert.AreEqual("123", Mustache.Render("{{_Test}}", new { _Test = 123 }));
+        }
     }
 }

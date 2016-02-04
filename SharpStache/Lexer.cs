@@ -30,7 +30,7 @@ namespace SharpStache
         {
             while (index < template.Length)
             {
-                if (!(template[index] == '.' || char.IsLetter(template[index])))
+                if (!(template[index] == '.' || template[index] == '_' || char.IsLetter(template[index])))
                     return index;
                 index++;
             }
